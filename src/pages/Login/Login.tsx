@@ -1,16 +1,59 @@
+import { yupResolver } from '@hookform/resolvers/yup'
 import { TextField } from '@radix-ui/themes'
+import { useMutation } from '@tanstack/react-query'
+import axios from 'axios'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
+import { loginAccount } from 'src/apis/auth.api'
 import { FaceBookIcon, GoogleIcon, QRIcon } from 'src/components/Icon'
+import Input from 'src/components/Input'
+import { ResponseApi } from 'src/types/utils.type'
+import { Schema, schema } from 'src/utils/rules'
+import { isAxiosUnprocessableEntityError } from 'src/utils/utils'
 
+type FormData = Pick<Schema, 'email' | 'password'>
+const loginSchema = schema.omit(['confirm_password'])
 export default function Login() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors }
-  } = useForm()
+  } = useForm<FormData>({
+    resolver: yupResolver(loginSchema)
+  })
+
+  const loginAccountMutation = useMutation({
+    mutationFn: (body: FormData) => loginAccount(body)
+  })
+
+  useEffect(() => {
+    axios.get('https://vidsrc.xyz/embed/movie/636706').then((repsone) => {
+      console.log(repsone)
+    })
+  }, [])
   const onSubmit = handleSubmit((data) => {
-    console.log(data)
+    loginAccountMutation.mutate(data, {
+      onSuccess: (value) => {
+        console.log(value)
+      },
+      onError: (errors) => {
+        if (isAxiosUnprocessableEntityError<ResponseApi<FormData>>(errors)) {
+          const formError = errors.response?.data.data
+          // console.log(formError)
+
+          if (formError) {
+            Object.entries(formError).forEach(([key, value]) => {
+              setError(key as keyof FormData, {
+                message: value,
+                type: 'Server'
+              })
+            })
+          }
+        }
+      }
+    })
   })
   return (
     <div className='bg-contain bg-white bg-[url("https://files.shopeeanalytics.com/upload/images/2022/11/22/33fe5490d792aa8a862b4f4b46b33f4f.png")]'>
@@ -39,27 +82,23 @@ export default function Login() {
             {/* form */}
             <form onSubmit={onSubmit}>
               {/* email */}
-              <div className='mb-[14px]'>
-                <input
-                  name='email'
-                  placeholder='Email/Số điện thoại/Tên đăng nhập'
-                  className='placeholder:text-[#b4b4b4] p-3 text-sm leading-4 w-full border border-[#313131] focus:border focus:border-[#7b7b7b] bg-[#0d0d0e] outline-none rounded'
-                  type='text'
-                />
-                <div className='text-red-500 text-xs mt-1 '>Đây là lỗi</div>
-              </div>
+              <Input
+                name='email'
+                register={register}
+                type='text'
+                errorsMessage={errors.email?.message}
+                placeholder='Email đăng nhập'
+              />
               {/* email */}
               {/* mat khau */}
-              <div className='mb-[14px]'>
-                <input
-                  name='password'
-                  placeholder='Mật khẩu'
-                  className='placeholder:text-[#b4b4b4] p-3 text-white text-sm leading-4 w-full border border-[#313131] focus:border focus:border-[#7b7b7b] bg-[#0d0d0e] outline-0 rounded'
-                  type='password'
-                  autoComplete='on'
-                />
-                <div className='text-red-500 text-xs mt-1 '>Đây là lỗi</div>
-              </div>
+              <Input
+                name='password'
+                register={register}
+                type='password'
+                errorsMessage={errors.password?.message}
+                placeholder='Mật khẩu'
+                autoComplete='on'
+              />
               {/* mat khau */}
 
               {/* nut dang nhap */}

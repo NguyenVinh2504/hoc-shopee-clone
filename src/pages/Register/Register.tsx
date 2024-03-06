@@ -2,23 +2,57 @@ import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { FaceBookIcon, GoogleIcon, QRIcon } from 'src/components/Icon'
 import Input from 'src/components/Input'
-import { confirm_password, emailRule, passwordRules } from 'src/utils/rules'
+import { Schema, schema } from 'src/utils/rules'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { registerAccount } from 'src/apis/auth.api'
+import { useMutation } from '@tanstack/react-query'
+import { isAxiosUnprocessableEntityError } from 'src/utils/utils'
+import { ResponseApi } from 'src/types/utils.type'
 
-interface FormData {
-  email: string
-  password: string
-  confirm_password: string
-}
+type FormData = Pick<Schema, 'email' | 'password' | 'confirm_password'>
 
 export default function Register() {
   const {
     register,
     handleSubmit,
-    getValues,
+    setError,
     formState: { errors }
-  } = useForm<FormData>()
+  } = useForm<FormData>({
+    resolver: yupResolver(schema)
+  })
+
+  const registerAccountMutation = useMutation({
+    mutationFn: registerAccount
+  })
+
   const onSubmit = handleSubmit((data) => {
-    console.log(data)
+    const { email, password } = data
+    const body = {
+      email,
+      password
+    }
+    registerAccountMutation.mutate(body, {
+      onSuccess: (value) => {
+        console.log(value)
+      },
+      onError: (error) => {
+        console.log(error)
+
+        if (isAxiosUnprocessableEntityError<ResponseApi<Omit<FormData, 'confirm_password'>>>(error)) {
+          const formError = error.response?.data.data
+          // console.log(formError)
+
+          if (formError) {
+            Object.entries(formError).forEach(([key, value]) => {
+              setError(key as keyof Omit<FormData, 'confirm_password'>, {
+                message: value,
+                type: 'Server'
+              })
+            })
+          }
+        }
+      }
+    })
   })
 
   return (
@@ -40,7 +74,6 @@ export default function Register() {
                 register={register}
                 type='text'
                 errorsMessage={errors.email?.message}
-                rules={emailRule}
                 placeholder='Email đăng nhập'
               />
               {/* email */}
@@ -50,7 +83,6 @@ export default function Register() {
                 register={register}
                 type='password'
                 errorsMessage={errors.password?.message}
-                rules={passwordRules}
                 placeholder='Mật khẩu'
                 autoComplete='on'
               />
@@ -61,7 +93,6 @@ export default function Register() {
                 register={register}
                 type='password'
                 errorsMessage={errors.confirm_password?.message}
-                rules={confirm_password(getValues)}
                 placeholder='Nhập lại mật khẩu'
                 autoComplete='on'
               />
