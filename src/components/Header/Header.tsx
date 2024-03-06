@@ -34,7 +34,14 @@ export default function Header() {
     role: 'menu'
   })
   const { getReferenceProps, getFloatingProps } = useInteractions([hover, role])
-  console.log(getReferenceProps())
+  // console.log(
+  //   x,
+  //   x
+  //     ? Number((context.elements.reference as HTMLElement)?.offsetLeft) -
+  //         x +
+  //         Number((context.elements.reference as HTMLElement)?.offsetWidth) / 2
+  //     : undefined
+  // )
 
   return (
     <div className='h-[119px] bg-slate-1 border-gray-5  border-b flex items-center'>
@@ -50,11 +57,13 @@ export default function Header() {
               {isOpen && (
                 <div ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
                   <motion.div
+                    style={{
+                      transformOrigin: `${x ? Number((context.elements.reference as HTMLElement)?.offsetLeft) - x + Number((context.elements.reference as HTMLElement)?.offsetWidth) / 2 : undefined}px top`
+                    }}
                     className='bg-[#18191b] p-2 min-w-[200px] rounded border-[1px] border-[#313131] shadow-lg shadow-black '
                     initial={{
                       opacity: 0,
-                      transform: 'scale(0)',
-                      transformOrigin: `${Number((context.elements.reference as any)?.offsetLeft) - x + Number((context.elements.reference as any)?.offsetWidth) / 2}px top`
+                      transform: 'scale(0)'
                     }}
                     animate={{
                       opacity: 1,
