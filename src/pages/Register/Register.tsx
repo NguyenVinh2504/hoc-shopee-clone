@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { FaceBookIcon, GoogleIcon, QRIcon } from 'src/components/Icon'
 import Input from 'src/components/Input'
 import { Schema, schema } from 'src/utils/rules'
@@ -7,11 +7,18 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { registerAccount } from 'src/apis/auth.api'
 import { useMutation } from '@tanstack/react-query'
 import { isAxiosUnprocessableEntityError } from 'src/utils/utils'
-import { ResponseApi } from 'src/types/utils.type'
+import { ErrorResponseApi } from 'src/types/utils.type'
+import { useContext } from 'react'
+import { AppContext } from 'src/contexts/app.contexts'
+import Button from 'src/components/Button'
 
 type FormData = Pick<Schema, 'email' | 'password' | 'confirm_password'>
 
 export default function Register() {
+  const { setIsAuthenticated } = useContext(AppContext)
+
+  const navigate = useNavigate()
+
   const {
     register,
     handleSubmit,
@@ -33,12 +40,11 @@ export default function Register() {
     }
     registerAccountMutation.mutate(body, {
       onSuccess: (value) => {
-        console.log(value)
+        setIsAuthenticated(true)
+        navigate('/')
       },
       onError: (error) => {
-        console.log(error)
-
-        if (isAxiosUnprocessableEntityError<ResponseApi<Omit<FormData, 'confirm_password'>>>(error)) {
+        if (isAxiosUnprocessableEntityError<ErrorResponseApi<Omit<FormData, 'confirm_password'>>>(error)) {
           const formError = error.response?.data.data
           // console.log(formError)
 
@@ -98,9 +104,14 @@ export default function Register() {
               />
               {/*nhap lai mat khau */}
               {/* nut dang nhap */}
-              <button className='px-2 leading-10 bg-[#E54D2E] hover:bg-[#EC6142] text-sm uppercase  min-w-24 rounded w-full'>
+              <Button
+                type='submit'
+                className='w-full'
+                disabled={registerAccountMutation.isPending}
+                isLoading={registerAccountMutation.isPending}
+              >
                 Đăng Nhập
-              </button>
+              </Button>
               {/* nut dang nhap */}
             </form>
             {/* form */}

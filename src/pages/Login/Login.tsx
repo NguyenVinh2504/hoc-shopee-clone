@@ -2,19 +2,24 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { TextField } from '@radix-ui/themes'
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
-import { useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { loginAccount } from 'src/apis/auth.api'
+import Button from 'src/components/Button'
 import { FaceBookIcon, GoogleIcon, QRIcon } from 'src/components/Icon'
 import Input from 'src/components/Input'
-import { ResponseApi } from 'src/types/utils.type'
+import { AppContext } from 'src/contexts/app.contexts'
+import { ErrorResponseApi } from 'src/types/utils.type'
 import { Schema, schema } from 'src/utils/rules'
 import { isAxiosUnprocessableEntityError } from 'src/utils/utils'
 
 type FormData = Pick<Schema, 'email' | 'password'>
 const loginSchema = schema.omit(['confirm_password'])
 export default function Login() {
+  const { setIsAuthenticated } = useContext(AppContext)
+
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -28,18 +33,14 @@ export default function Login() {
     mutationFn: (body: FormData) => loginAccount(body)
   })
 
-  useEffect(() => {
-    axios.get('https://vidsrc.xyz/embed/movie/636706').then((repsone) => {
-      console.log(repsone)
-    })
-  }, [])
   const onSubmit = handleSubmit((data) => {
     loginAccountMutation.mutate(data, {
       onSuccess: (value) => {
-        console.log(value)
+        setIsAuthenticated(true)
+        navigate('/')
       },
       onError: (errors) => {
-        if (isAxiosUnprocessableEntityError<ResponseApi<FormData>>(errors)) {
+        if (isAxiosUnprocessableEntityError<ErrorResponseApi<FormData>>(errors)) {
           const formError = errors.response?.data.data
           // console.log(formError)
 
@@ -102,12 +103,14 @@ export default function Login() {
               {/* mat khau */}
 
               {/* nut dang nhap */}
-              <button
+              <Button
                 type='submit'
-                className='px-2 leading-10 bg-[#E54D2E] hover:bg-[#EC6142] text-sm uppercase  min-w-24 rounded w-full'
+                className='w-full'
+                disabled={loginAccountMutation.isPending}
+                isLoading={loginAccountMutation.isPending}
               >
                 Đăng Nhập
-              </button>
+              </Button>
               {/* nut dang nhap */}
             </form>
             <div className='my-[10px] text-xs flex justify-between '>

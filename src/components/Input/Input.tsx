@@ -1,6 +1,7 @@
+import { InputHTMLAttributes } from 'react'
 import type { RegisterOptions, UseFormRegister } from 'react-hook-form'
 
-interface Props {
+interface Props extends InputHTMLAttributes<HTMLInputElement> {
   errorsMessage?: string
   className?: string
   name: string
@@ -8,14 +9,7 @@ interface Props {
   rules?: RegisterOptions
 }
 
-export default function Input({
-  register,
-  rules,
-  name,
-  className,
-  errorsMessage,
-  ...props
-}: Props & React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>) {
+export default function Input({ register, rules, name, className, errorsMessage, ...props }: Props) {
   return (
     <div className={`mb-[12px] ${className}`}>
       <input

@@ -1,39 +1,11 @@
 import { Link } from 'react-router-dom'
 import { ArrowDownIcon, CategoriesIcon, EarthIcon, Logo, SearchIcon } from '../Icon'
-import { useState } from 'react'
-import {
-  FloatingPortal,
-  autoUpdate,
-  flip,
-  offset,
-  safePolygon,
-  shift,
-  useFloating,
-  useHover,
-  useInteractions,
-  useRole
-} from '@floating-ui/react'
-import { AnimatePresence, motion } from 'framer-motion'
+import Popover from '../Popover'
+import { useMutation } from '@tanstack/react-query'
+import { logout } from 'src/apis/auth.api'
+import { useContext } from 'react'
+import { AppContext } from 'src/contexts/app.contexts'
 export default function Header() {
-  const [isOpen, setIsOpen] = useState(false)
-  const { refs, floatingStyles, context, x } = useFloating({
-    open: isOpen,
-    onOpenChange: setIsOpen,
-    middleware: [offset(10), flip(), shift()],
-    placement: 'bottom-end',
-    whileElementsMounted: autoUpdate
-  })
-
-  const hover = useHover(context, {
-    handleClose: safePolygon(),
-    delay: {
-      close: 300
-    }
-  })
-  const role = useRole(context, {
-    role: 'menu'
-  })
-  const { getReferenceProps, getFloatingProps } = useInteractions([hover, role])
   // console.log(
   //   x,
   //   x
@@ -42,58 +14,70 @@ export default function Header() {
   //         Number((context.elements.reference as HTMLElement)?.offsetWidth) / 2
   //     : undefined
   // )
+  const { isAuthenticated, setIsAuthenticated } = useContext(AppContext)
+  const logoutMutation = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      setIsAuthenticated(false)
+    }
+  })
+
+  const handleLogout = () => {
+    logoutMutation.mutate()
+  }
 
   return (
     <div className='h-[119px] bg-slate-1 border-gray-5  border-b flex items-center'>
       <div className='container w-full'>
         <div className='flex justify-end'>
-          <div className='flex items-center cursor-pointer' ref={refs.setReference} {...getReferenceProps()}>
-            <EarthIcon />
-            <span className='mx-1'>Tiếng Việt</span>
-            <ArrowDownIcon />
-          </div>
-          <FloatingPortal>
-            <AnimatePresence>
-              {isOpen && (
-                <div ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
-                  <motion.div
-                    style={{
-                      transformOrigin: `${x ? Number((context.elements.reference as HTMLElement)?.offsetLeft) - x + Number((context.elements.reference as HTMLElement)?.offsetWidth) / 2 : undefined}px top`
-                    }}
-                    className='bg-[#18191b] p-2 min-w-[200px] rounded border-[1px] border-[#313131] shadow-lg shadow-black '
-                    initial={{
-                      opacity: 0,
-                      transform: 'scale(0)'
-                    }}
-                    animate={{
-                      opacity: 1,
-                      transform: 'scale(1)'
-                    }}
-                    exit={{ transform: 'scale(0)' }}
-                    transition={{
-                      duration: 0.2
-                    }}
-                  >
-                    <div className='flex flex-col'>
-                      <span className='px-3 py-2 hover:bg-orange rounded' onClick={() => setIsOpen(false)}>
-                        Tiếng Việt
-                      </span>
-                      <span className='px-3 py-2 hover:bg-orange rounded'>English</span>
-                    </div>
-                  </motion.div>
+          <Popover
+            renderFloating={
+              <div className='bg-[#18191b] p-2 min-w-[200px] rounded border-[1px] border-[#313131] shadow-lg shadow-black flex flex-col'>
+                <button className='px-3 py-2 hover:bg-orange rounded text-start'>Tiếng Việt</button>
+                <button className='px-3 py-2 hover:bg-orange rounded text-start'>English</button>
+              </div>
+            }
+          >
+            <div className={`flex items-center cursor-pointer`}>
+              <EarthIcon />
+              <span className='mx-1'>Tiếng Việt</span>
+              <ArrowDownIcon />
+            </div>
+          </Popover>
+          {isAuthenticated && (
+            <Popover
+              renderFloating={
+                <div className='bg-[#18191b] p-2 min-w-[200px] rounded border-[1px] border-[#313131] shadow-lg shadow-black'>
+                  <div className='flex flex-col leading-none capitalize'>
+                    <Link to={'/profile'} className='px-3 py-3 hover:bg-orange rounded'>
+                      Tài khoản của tôi
+                    </Link>
+                    <Link to={'/'} className='px-3 py-3 hover:bg-orange rounded'>
+                      Đơn mua
+                    </Link>
+                    <button className='px-3 py-3 hover:bg-orange rounded text-start' onClick={handleLogout}>
+                      Đăng xuất
+                    </button>
+                  </div>
                 </div>
-              )}
-            </AnimatePresence>
-          </FloatingPortal>
-          <div className='flex items-center'>
-            <Link to={'/register'}>
-              <div className='mx-[12px] cursor-pointer'>Đăng ký</div>
-            </Link>
-            <div>|</div>
-            <Link to={'/login'}>
-              <div className='mx-[12px] cursor-pointer'>Đăng nhập</div>
-            </Link>
-          </div>
+              }
+            >
+              <div className='mx-[10px] flex items-center gap-1 cursor-pointer'>
+                <img
+                  src='https://down-vn.img.susercontent.com/file/a4c9cbd1be053a53d3aeca30b2c5d138_tn'
+                  className='w-[20px] h-[20px] rounded-full'
+                />
+                <span>NguyenVinh</span>
+              </div>
+            </Popover>
+          )}
+          {!isAuthenticated && (
+            <div className='flex mx-3'>
+              <Link to={'/register'}>Đăng Ký</Link>
+              <div className='mx-2 relative before:absolute before:content[""] before:w-[1px] before:h-[70%] before:bg-gray-400 before:top-[50%] before:-translate-y-[50%]'></div>
+              <Link to={'/login'}>Đăng Nhập</Link>
+            </div>
+          )}
         </div>
         <div className='grid grid-cols-12 items-end mt-4'>
           {/* <div className='flex justify-between items-end'> */}
