@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query'
 import { logout } from 'src/apis/auth.api'
 import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.contexts'
+import path from 'src/constants/path'
 export default function Header() {
   // console.log(
   //   x,
@@ -14,11 +15,12 @@ export default function Header() {
   //         Number((context.elements.reference as HTMLElement)?.offsetWidth) / 2
   //     : undefined
   // )
-  const { isAuthenticated, setIsAuthenticated } = useContext(AppContext)
+  const { isAuthenticated, setIsAuthenticated, setProfile, profile } = useContext(AppContext)
   const logoutMutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
       setIsAuthenticated(false)
+      setProfile(null)
     }
   })
 
@@ -38,9 +40,11 @@ export default function Header() {
               </div>
             }
           >
-            <div className={`flex items-center cursor-pointer`}>
+            <div
+              className={`flex items-center cursor-pointer [&_svg]:hover:stroke-white/70 [&>span]:hover:text-white/70`}
+            >
               <EarthIcon />
-              <span className='mx-1'>Tiếng Việt</span>
+              <span className='mx-1 '>Tiếng Việt</span>
               <ArrowDownIcon />
             </div>
           </Popover>
@@ -49,7 +53,7 @@ export default function Header() {
               renderFloating={
                 <div className='bg-[#18191b] p-2 min-w-[200px] rounded border-[1px] border-[#313131] shadow-lg shadow-black'>
                   <div className='flex flex-col leading-none capitalize'>
-                    <Link to={'/profile'} className='px-3 py-3 hover:bg-orange rounded'>
+                    <Link to={path.profile} className='px-3 py-3 hover:bg-orange rounded'>
                       Tài khoản của tôi
                     </Link>
                     <Link to={'/'} className='px-3 py-3 hover:bg-orange rounded'>
@@ -67,15 +71,19 @@ export default function Header() {
                   src='https://down-vn.img.susercontent.com/file/a4c9cbd1be053a53d3aeca30b2c5d138_tn'
                   className='w-[20px] h-[20px] rounded-full'
                 />
-                <span>NguyenVinh</span>
+                <span className='hover:text-white/70'>{profile?.email}</span>
               </div>
             </Popover>
           )}
           {!isAuthenticated && (
             <div className='flex mx-3'>
-              <Link to={'/register'}>Đăng Ký</Link>
-              <div className='mx-2 relative before:absolute before:content[""] before:w-[1px] before:h-[70%] before:bg-gray-400 before:top-[50%] before:-translate-y-[50%]'></div>
-              <Link to={'/login'}>Đăng Nhập</Link>
+              <Link className='hover:text-white/70' to={path.register}>
+                Đăng Ký
+              </Link>
+              <div className=' mx-2 relative before:absolute before:content[""] before:w-[1px] before:h-[70%] before:bg-gray-400 before:top-[50%] before:-translate-y-[50%]'></div>
+              <Link className='hover:text-white/70' to={path.login}>
+                Đăng Nhập
+              </Link>
             </div>
           )}
         </div>

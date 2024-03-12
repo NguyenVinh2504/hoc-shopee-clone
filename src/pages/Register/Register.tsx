@@ -15,7 +15,7 @@ import Button from 'src/components/Button'
 type FormData = Pick<Schema, 'email' | 'password' | 'confirm_password'>
 
 export default function Register() {
-  const { setIsAuthenticated } = useContext(AppContext)
+  const { setIsAuthenticated, setProfile } = useContext(AppContext)
 
   const navigate = useNavigate()
 
@@ -41,6 +41,7 @@ export default function Register() {
     registerAccountMutation.mutate(body, {
       onSuccess: (value) => {
         setIsAuthenticated(true)
+        setProfile(value.data.data.user)
         navigate('/')
       },
       onError: (error) => {

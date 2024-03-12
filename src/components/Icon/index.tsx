@@ -84,14 +84,14 @@ export function CategoriesIcon() {
   )
 }
 
-export function ArrowDownIcon() {
+export function ArrowDownIcon({ className }: { className?: string }) {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
       fill='none'
       stroke='currentColor'
       strokeWidth='1.5'
-      className='h-5 w-5'
+      className={'h-5 w-5' + `${className ? ` ${className}` : ''}`}
       viewBox='0 0 24 24'
     >
       <path strokeLinecap='round' strokeLinejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'></path>
@@ -99,14 +99,14 @@ export function ArrowDownIcon() {
   )
 }
 
-export function EarthIcon() {
+export function EarthIcon({ className }: { className?: string }) {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
       fill='none'
       stroke='currentColor'
       strokeWidth='1.5'
-      className='h-5 w-5'
+      className={`h-5 w-5 ${className}`}
       viewBox='0 0 24 24'
     >
       <path
@@ -142,7 +142,7 @@ export function SpinnerIcon() {
     <svg
       xmlns='http://www.w3.org/2000/svg'
       fill='none'
-      aria-idden='true'
+      aria-hidden='true'
       className='inline w-4 h-4 text-white animate-spin'
       viewBox='0 0 100 101'
     >

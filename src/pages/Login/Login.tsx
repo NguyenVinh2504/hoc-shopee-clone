@@ -17,7 +17,7 @@ import { isAxiosUnprocessableEntityError } from 'src/utils/utils'
 type FormData = Pick<Schema, 'email' | 'password'>
 const loginSchema = schema.omit(['confirm_password'])
 export default function Login() {
-  const { setIsAuthenticated } = useContext(AppContext)
+  const { setIsAuthenticated, setProfile } = useContext(AppContext)
 
   const navigate = useNavigate()
   const {
@@ -37,6 +37,7 @@ export default function Login() {
     loginAccountMutation.mutate(data, {
       onSuccess: (value) => {
         setIsAuthenticated(true)
+        setProfile(value.data.data.user)
         navigate('/')
       },
       onError: (errors) => {
