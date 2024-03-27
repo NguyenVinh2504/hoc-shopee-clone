@@ -157,3 +157,75 @@ export function SpinnerIcon() {
     </svg>
   )
 }
+
+export function ListIcon() {
+  return (
+    <svg className='h-4 w-3 fill-current ' viewBox='0 0 12 10'>
+      <g fillRule='evenodd'>
+        <path
+          d='M0 2h2V0H0zm4 0h7.152V0H4zM0 6h2V4H0zm4 0h7.152V4H4zM0 10h2V8H0zm4 0h7.152V8H4z'
+          transform='translate(-373 -208) translate(155 191) translate(218 17)'
+        ></path>
+      </g>
+    </svg>
+  )
+}
+
+export function StartIcon() {
+  return (
+    <svg enableBackground='new 0 0 15 15' viewBox='0 0 15 15' x={0} y={0}>
+      <polygon
+        points='7.5 .8 9.7 5.4 14.5 5.9 10.7 9.1 11.8 14.2 7.5 11.6 3.2 14.2 4.3 9.1 .5 5.9 5.3 5.4'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeMiterlimit={10}
+      />
+    </svg>
+  )
+}
+
+export function FilterIcon() {
+  return (
+    <svg enableBackground='new 0 0 15 15' viewBox='0 0 15 15' x={0} y={0} className='h-4 w-3 fill-white stroke-white'>
+      <g>
+        <polyline
+          fill='none'
+          points='5.5 13.2 5.5 5.8 1.5 1.2 13.5 1.2 9.5 5.8 9.5 10.2'
+          strokeLinecap='round'
+          strokeLinejoin='round'
+          strokeMiterlimit={10}
+        />
+      </g>
+    </svg>
+  )
+}
+
+export function ArrowLeft() {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      fill='none'
+      viewBox='0 0 24 24'
+      strokeWidth='1.5'
+      stroke='currentColor'
+      className='h-3 w-3'
+    >
+      <path strokeLinecap='round' strokeLinejoin='round' d='M15.75 19.5L8.25 12l7.5-7.5' />
+    </svg>
+  )
+}
+
+export function ArrowRight() {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      fill='none'
+      viewBox='0 0 24 24'
+      strokeWidth='1.5'
+      stroke='currentColor'
+      className='h-3 w-3'
+    >
+      <path strokeLinecap='round' strokeLinejoin='round' d='M8.25 4.5l7.5 7.5-7.5 7.5' />
+    </svg>
+  )
+}

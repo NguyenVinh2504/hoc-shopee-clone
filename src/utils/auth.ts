@@ -13,7 +13,7 @@ export const getAccessTokenFromLS = () => {
   return localStorage.getItem('accessToken') || ''
 }
 
-export const getProfileFromLs = () => {
+export const getProfileFromLs = (): User | null => {
   const user = localStorage.getItem('profile')
   return user ? JSON.parse(user) : null
 }

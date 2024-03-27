@@ -18,10 +18,9 @@ export default function Button(props: ButtonProps) {
         : size === 'large'
           ? 'text-base px-5 leading-[48px]'
           : 'text-sm px-2 leading-10'
-
   return (
     <button
-      className={`${sizeClassName} [&+button]:ml-1 flex font-medium justify-center bg-[#E54D2E] hover:bg-[#EC6142] uppercase min-w-24 rounded disabled:bg-[#AC4D39] ${newClassName}`}
+      className={`${sizeClassName} flex font-medium justify-center bg-[#E54D2E] hover:bg-[#EC6142] uppercase min-w-24 rounded disabled:bg-[#AC4D39] ${newClassName}`}
       disabled={disabled}
       {...rest}
     >

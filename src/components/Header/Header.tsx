@@ -34,14 +34,14 @@ export default function Header() {
         <div className='flex justify-end'>
           <Popover
             renderFloating={
-              <div className='bg-[#18191b] p-2 min-w-[200px] rounded border-[1px] border-[#313131] shadow-lg shadow-black flex flex-col'>
+              <div className='bg-[#18191b] p-2 min-w-[200px] rounded-lg border-[1px] border-[#313131] shadow-lg shadow-black flex flex-col'>
                 <button className='px-3 py-2 hover:bg-orange rounded text-start'>Tiếng Việt</button>
                 <button className='px-3 py-2 hover:bg-orange rounded text-start'>English</button>
               </div>
             }
           >
             <div
-              className={`flex items-center cursor-pointer [&_svg]:hover:stroke-white/70 [&>span]:hover:text-white/70`}
+              className={`flex items-center cursor-pointer [&>svg]:hover:stroke-white/70 [&>span]:hover:text-white/70`}
             >
               <EarthIcon />
               <span className='mx-1 '>Tiếng Việt</span>
@@ -51,7 +51,7 @@ export default function Header() {
           {isAuthenticated && (
             <Popover
               renderFloating={
-                <div className='bg-[#18191b] p-2 min-w-[200px] rounded border-[1px] border-[#313131] shadow-lg shadow-black'>
+                <div className='bg-[#18191b] p-2 min-w-[200px] rounded-md border-[1px] border-[#313131] shadow-lg shadow-black'>
                   <div className='flex flex-col leading-none capitalize'>
                     <Link to={path.profile} className='px-3 py-3 hover:bg-orange rounded'>
                       Tài khoản của tôi
